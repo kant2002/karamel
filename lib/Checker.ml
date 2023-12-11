@@ -360,9 +360,10 @@ and check' env t e =
       check_mut env "write" c1;
       c TUnit
 
-  | EBufSub (e1, e2) ->
+  | EBufSub (e1, e2, oe3) ->
       check_array_index env e2;
-      check_buffer env t e1
+      check_buffer env t e1;
+      (match oe3 with | None -> () | Some e3 -> check_array_index env e3)
 
   | EBufDiff (e1, e2) ->
       let t1 = infer env e1 in
@@ -626,8 +627,9 @@ and infer' env e =
       check env t1 e3;
       TUnit
 
-  | EBufSub (e1, e2) ->
+  | EBufSub (e1, e2, oe3) ->
       check_array_index env e2;
+      (match oe3 with | None -> () | Some e3 -> check_array_index env e3);
       let t1, c = infer_buffer env e1 in
       TBuf (t1, c)
 

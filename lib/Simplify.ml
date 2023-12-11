@@ -817,14 +817,14 @@ let misc_cosmetic = object (self)
     | _ ->
         EBufWrite (e1, e2, e3)
 
-  method! visit_EBufSub env e1 e2 =
+  method! visit_EBufSub env e1 e2 e3 =
     (* AstToCStar emits BufSub (e, 0) as just e, so we need the value
      * check to be in agreement on both sides. *)
     match e2.node with
     | EConstant (_, "0") when not (Options.rust ()) ->
         (self#visit_expr env e1).node
     | _ ->
-        EBufSub (self#visit_expr env e1, self#visit_expr env e2)
+        EBufSub (self#visit_expr env e1, self#visit_expr env e2, Option.map (self#visit_expr env) e3)
 
   (* renumber uu's to have a stable numbering scheme that minimizes the diff
    * from one code generation to another *)
@@ -1205,10 +1205,15 @@ and hoist_expr loc pos e =
         let b = { b with node = { b.node with meta = Some MetaSequence }} in
         lhs @ [ b, mk (EBufFree e) ], mk EUnit
 
-  | EBufSub (e1, e2) ->
+  | EBufSub (e1, e2, oe3) ->
       let lhs1, e1 = hoist_expr loc Unspecified e1 in
       let lhs2, e2 = hoist_expr loc Unspecified e2 in
-      lhs1 @ lhs2, mk (EBufSub (e1, e2))
+      (match oe3 with
+      | None -> lhs1 @ lhs2, mk (EBufSub (e1, e2, None))
+      | Some e3 ->
+        let lhs3, e3 = hoist_expr loc Unspecified e3 in
+        lhs1 @ lhs2 @ lhs3, mk (EBufSub (e1, e2, Some e3))
+      )
 
   | EBufDiff (e1, e2) ->
       let lhs1, e1 = hoist_expr loc Unspecified e1 in

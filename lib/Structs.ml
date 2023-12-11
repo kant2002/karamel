@@ -684,8 +684,8 @@ let to_addr is_struct =
     | EAddrOf e ->
         w (EAddrOf (to_addr false e))
 
-    | EBufSub (e1, e2) ->
-        w (EBufSub (e1, e2))
+    | EBufSub (e1, e2, oe3) ->
+        w (EBufSub (e1, e2, oe3))
 
     | EBufDiff (e1, e2) ->
         w (EBufDiff (e1, e2))

@@ -576,7 +576,8 @@ and translate_expr_with_type (env: env) (e: Ast.expr) (t_ret: MiniRust.typ): Min
   | EPolyComp _ ->
       failwith "unexpected: EPolyComp"
 
-  | ELet (b, ({ node = EBufSub ({ node = EBound v_base; _ } as e_base, e_ofs); _ } as e1), e2) ->
+  | ELet (b, ({ node = EBufSub ({ node = EBound v_base; _ } as e_base, e_ofs, _); _ } as e1), e2) ->
+      (* TODO (AF): Do not ignore the length of the slice *)
       if Options.debug "rs-splits" then begin
         KPrint.bprintf "Translating: let %a = %a\n" PrintAst.Ops.pbind b PrintAst.Ops.pexpr e1;
         debug env
@@ -664,10 +665,11 @@ and translate_expr_with_type (env: env) (e: Ast.expr) (t_ret: MiniRust.typ): Min
       let e2 = translate_expr_with_type env e2 (Constant SizeT) in
       let e3 = translate_expr env e3 in
       Assign (Index (e1, e2), e3)
-  | EBufSub (e1, e2) ->
+  | EBufSub (e1, e2, _) ->
       (* This is a fallback for the analysis above. Happens if, for instance, the pointer arithmetic
          appears in subexpression position (like, function call), in which case there's a chance
          this might still work! *)
+      (* TODO (AF): Handle the length of the slice *)
       let e1 = translate_expr env e1 in
       let e2 = translate_expr_with_type env e2 (Constant SizeT) in
       Borrow (Mut, Index (e1, Range (Some e2, None, false)))

@@ -230,10 +230,15 @@ let rec merge' (env: env) (u: S.t) (e: expr): S.t * S.t * expr =
       let d3, u, e3 = merge env u e3 in
       S.inter (S.inter d1 d2) d3, u, w (EBufWrite (e1, e2, e3))
 
-  | EBufSub (e1, e2) ->
+  | EBufSub (e1, e2, oe3) ->
       let d1, u, e1 = merge env u e1 in
       let d2, u, e2 = merge env u e2 in
-      S.inter d1 d2, u, w (EBufSub (e1, e2))
+      (match oe3 with
+      | None -> S.inter d1 d2, u, w (EBufSub (e1, e2, None))
+      | Some e3 ->
+        let d3, u, e2 = merge env u e3 in
+        S.inter (S.inter d1 d2) d3, u, w (EBufSub (e1, e2, Some e3))
+      )
 
   | EBufDiff (e1, e2) ->
       let d1, u, e1 = merge env u e1 in

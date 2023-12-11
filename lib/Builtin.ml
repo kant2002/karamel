@@ -270,7 +270,7 @@ let lowstar_endianness: file =
       store_i_lid,
       [ fresh_binder "b" buf8; fresh_binder "i" int32; fresh_binder "x" t ],
       with_unit (EApp (with_type store_t (EQualified store_lid),
-        [ with_type buf8 (EBufSub (with_type buf8 (EBound 2), with_type int32 (EBound 1)));
+        [ with_type buf8 (EBufSub (with_type buf8 (EBound 2), with_type int32 (EBound 1), None));
           with_type t (EBound 0) ])));
     ]
 
@@ -287,7 +287,7 @@ let lowstar_endianness: file =
       load_i_lid,
       [ fresh_binder "b" buf8; fresh_binder "i" int32 ],
       with_type t (EApp (with_type load_t (EQualified load_lid),
-        [ with_type buf8 (EBufSub (with_type buf8 (EBound 1), with_type int32 (EBound 0)))])));
+        [ with_type buf8 (EBufSub (with_type buf8 (EBound 1), with_type int32 (EBound 0), None))])));
     ]
   in
   let mk_conv s t = [

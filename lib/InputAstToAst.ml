@@ -183,8 +183,8 @@ and mk_expr = function
       mk (EBufWrite (mk_expr e1, mk_expr e2, mk_expr e3))
   | I.EBufFill (e1, e2, e3) ->
       mk (EBufFill (mk_expr e1, mk_expr e2, mk_expr e3))
-  | I.EBufSub (e1, e2) ->
-      mk (EBufSub (mk_expr e1, mk_expr e2))
+  | I.EBufSub (e1, e2, oe3) ->
+      mk (EBufSub (mk_expr e1, mk_expr e2, Option.map mk_expr oe3))
   | I.EBufDiff (e1, e2) ->
       mk (EBufDiff (mk_expr e1, mk_expr e2))
   | I.EBufBlit (e1, e2, e3, e4, e5) ->

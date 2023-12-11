@@ -805,7 +805,7 @@ and mk_expr (env: env) (locals: locals) (e: expr): locals * CF.expr =
       locals, mk_add32 e1 (mk_uint32 ofs)
 
   | EAddrOf ({ node = EBufRead (e1, e2); _ })
-  | EBufSub (e1, e2) ->
+  | EBufSub (e1, e2, _) ->
       let mult, base_size = cell_size env (assert_buf e.typ) in
       let locals, e1 = mk_expr env locals e1 in
       let locals, e2 = mk_expr env locals e2 in

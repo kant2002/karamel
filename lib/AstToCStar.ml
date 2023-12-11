@@ -387,7 +387,7 @@ and mk_expr env in_stmt e =
       CStar.BufCreateL (l, List.map (mk_expr env) es)
   | EBufRead (e1, e2) ->
       CStar.BufRead (mk_expr env e1, mk_expr env e2)
-  | EBufSub (e1, e2) ->
+  | EBufSub (e1, e2, _) ->
       CStar.BufSub (mk_expr env e1, mk_expr env e2)
   | EBufDiff (e1, e2) ->
       CStar.Call (CStar.Op K.Sub, [mk_expr env e1; mk_expr env e2])
