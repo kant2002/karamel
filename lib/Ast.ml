@@ -205,8 +205,8 @@ type expr' =
     (** e1[e2] *)
   | EBufWrite of expr * expr * expr
     (** e1[e2] <- e3 *)
-  | EBufSub of expr * expr
-    (** e1 + e2 *)
+  | EBufSub of expr * expr * expr option
+    (** e1 + e2, with an option for the length of the slice *)
   | EBufDiff of expr * expr
     (** e1 - e2 *)
   | EBufBlit of expr * expr * expr * expr * expr
