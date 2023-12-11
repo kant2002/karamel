@@ -357,7 +357,7 @@ class ['self] value_visitor = object (_self: 'self)
   method! visit_EApp _ _ _ = false
   method! visit_ELet _ _ _ _ = false
   method! visit_EBufRead _ _ _ = false
-  method! visit_EBufSub _ _ _ = false
+  method! visit_EBufSub _ _ _ _ = false
   method! visit_EBufDiff _ _ _ = false
   method! visit_EStandaloneComment _ _ = false
 end
@@ -752,11 +752,12 @@ let mk_bufblit src_buf src_ofs dst_buf dst_ofs len =
   | EConstant (_, "1") ->
       EBufWrite (dst_buf, dst_ofs, with_type t (EBufRead (src_buf, src_ofs)))
   | _ ->
+      (* TODO: AF, None should be replaced by Some len/len.node *)
       let b_src, body_src, ref_src =
-        mk_named_binding "src" (TBuf (t, true)) (EBufSub (src_buf, src_ofs))
+        mk_named_binding "src" (TBuf (t, true)) (EBufSub (src_buf, src_ofs, None))
       in
       let b_dst, body_dst, ref_dst =
-        mk_named_binding "dst" (TBuf (t, false)) (EBufSub (dst_buf, dst_ofs))
+        mk_named_binding "dst" (TBuf (t, false)) (EBufSub (dst_buf, dst_ofs, None))
       in
       let b_len, body_len, ref_len =
         mk_named_binding "len" uint32 len.node

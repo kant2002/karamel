@@ -242,8 +242,8 @@ and print_expr { node; typ } =
   | EBufWrite (e1, e2, e3) ->
       print_expr e1 ^^ (*colon ^^ print_typ e1.typ ^^*) lbracket ^^ print_expr e2 ^^ rbracket ^/^
       string "<-" ^/^ print_expr e3
-  | EBufSub (e1, e2) ->
-      print_app string "subbuf" print_expr [e1; e2]
+  | EBufSub (e1, e2, oe3) ->
+      print_app string "subbuf" print_expr (match oe3 with None -> [e1; e2] | Some e3 -> [e1; e2; e3])
   | EBufDiff (e1, e2) ->
       print_app string "diffbuf" print_expr [e1; e2]
   | EBufBlit (e1, e2, e3, e4, e5) ->
